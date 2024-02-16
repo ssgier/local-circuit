@@ -1,25 +1,9 @@
 import numpy as np
-import random
 from dataclasses import dataclass
 from typing import List, Optional
 from local_circuit.circuit_config import CircuitConfig
 from local_circuit.ltp import update_ltp_weights
 from local_circuit.stp import update_stp_weights
-
-
-def make_weight_mask(config: CircuitConfig) -> np.ndarray:
-    weight_mask = np.empty((config.N, config.N))
-
-    zeros = np.zeros(config.N, dtype=np.float64)
-    ones = np.ones(config.N, dtype=np.float64)
-
-    for weights_row_index in range(config.N):
-        connect_density = random.random() * config.max_connect_density
-        weight_mask[weights_row_index] = np.where(
-            np.random.random(config.N) < connect_density, ones, zeros
-        )
-
-    return weight_mask
 
 
 @dataclass
@@ -122,7 +106,7 @@ class Circuit:
 
         weights_shape = (config.N, config.N)
         self.t = 0
-        self.weight_mask = make_weight_mask(config)
+        self.weight_mask = np.ones(weights_shape)
         self.lt_weights = np.random.random(weights_shape)
         self.st_weights = np.zeros(weights_shape)
         self.window_rates = np.zeros(config.N)
