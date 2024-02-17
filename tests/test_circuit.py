@@ -116,3 +116,23 @@ class CircuitTest(TestCase):
         assert_array_almost_equal(circuit.lt_weights, np.array([[0, 0.2], [0, 0]]))
         assert_array_almost_equal(circuit.st_weights, np.array([[0, 0], [0, 0]]))
         assert_array_equal(out_frame, np.array([0, 1]))
+
+    def test_integration(self):
+        cc = CircuitConfig(
+            N=10, ltp_step_up=1.0, ltp_step_down=1.0, stp_skew_factor=0.0
+        )
+        circuit = Circuit(cc)
+        circuit.weight_mask = np.zeros_like(circuit.weight_mask)
+        circuit.weight_mask[-1, :] = 1.0
+
+        in_frame = np.array([2])
+        tf_spike = np.array([9])
+        circuit.process_cycle(in_frame, tf_spike)
+
+        in_frame = np.array([0, 1, 3, 4, 5, 6, 7, 8])
+        tf_no_spike = np.array([9])
+        circuit.process_cycle(in_frame, tf_no_spike=tf_no_spike)
+
+        out_frame = circuit.process_cycle(np.array([2]))
+
+        assert_array_equal(out_frame, np.array([2, 9]))

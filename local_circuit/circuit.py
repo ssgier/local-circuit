@@ -196,7 +196,11 @@ class Circuit:
     def _get_effective_weights(self) -> np.ndarray:
         stp_skew = self.config.stp_skew_factor
         scale = self.config.weight_scale_factor
-        return scale * (stp_skew * self.st_weights + (1 - stp_skew) * self.lt_weights)
+        return (
+            self.weight_mask
+            * scale
+            * (stp_skew * self.st_weights + (1 - stp_skew) * self.lt_weights)
+        )
 
     def _compute_homeostasis_offsets(self) -> np.ndarray:
         return (

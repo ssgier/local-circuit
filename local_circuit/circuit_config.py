@@ -12,11 +12,11 @@ class CompartmentConfig:
 class CircuitConfig:
     N: int = 1000
     max_connect_density: float = 0.2
-    ltp_step_up: float = 0.25
-    ltp_step_down: float = 0.35
-    stp_decay_factor: float = 0.8
-    stp_skew_factor: float = 0.75
-    weight_scale_factor: float = 0.25
+    ltp_step_up: float = 1.0
+    ltp_step_down: float = 1.0
+    stp_decay_factor: float = 1.0
+    stp_skew_factor: float = 0.0
+    weight_scale_factor: float = 1.0
     stochastic_offset_range: float = 0.0
     window_rate_decay_factor: float = 0.999
     homeostasis_target: float = 0.02
@@ -25,4 +25,8 @@ class CircuitConfig:
 
     def __post_init__(self):
         if len(self.compartments) == 0:
-            self.compartments = [CompartmentConfig(neuron_indexes=slice(self.N))]
+            self.compartments = [
+                CompartmentConfig(
+                    neuron_indexes=slice(self.N), max_spikes_per_cycle=self.N
+                )
+            ]
